@@ -33,7 +33,7 @@ body{margin:0;background:var(--bg);color:var(--txt);font-family:'Saira','Helveti
 .nav .sp{flex:1}
 .nav a{font-family:'Martian Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);text-decoration:none}
 .nav .cta{color:#0A0E16;background:var(--txt);padding:10px 16px;border-radius:999px;font-weight:600}
-@media(max-width:700px){.nav a:not(.cta){display:none}}
+@media(max-width:700px){.nav a:not(.cta):not(.brand){display:none}}
 
 /* ---------- app font (from the app's own bundle) ---------- */
 @font-face{font-family:'AppSans';font-weight:300;src:url(/assets/UniversalSans-Text-Light-230.ttf) format('truetype')}
@@ -235,6 +235,23 @@ body{margin:0;background:var(--bg);color:var(--txt);font-family:'Saira','Helveti
 .cb-drift{animation:cbDrift 60s linear infinite}
 @keyframes cbDrift{to{transform:translateX(-1280px)}}
 @media(prefers-reduced-motion:reduce){.cb-drift{animation:none}}
+/* "it's live": a fingertip taps a tab on the car's screen, then a chip from outside the screen hands over (see try.js) */
+.tcue{position:absolute;inset:0;z-index:6;pointer-events:none;--x:50%;--y:40%;--d:34px}
+.tcue-tip{position:absolute;left:var(--x);top:var(--y);width:var(--d);height:var(--d);margin:calc(var(--d) / -2) 0 0 calc(var(--d) / -2);border-radius:50%;background:rgba(255,255,255,.5);box-shadow:inset 0 0 0 2px rgba(255,255,255,.95),0 0 0 6px rgba(255,255,255,.12),0 10px 26px rgba(0,0,0,.55);opacity:0;transform:translate(70px,170px) scale(1.15);transition:transform .9s cubic-bezier(.2,.75,.2,1),opacity .35s ease}
+.tcue.go .tcue-tip{opacity:1;transform:none;transition:left .75s cubic-bezier(.2,.75,.2,1),top .75s cubic-bezier(.2,.75,.2,1),transform .9s cubic-bezier(.2,.75,.2,1),opacity .35s ease}
+.tcue.go .tcue-tip.press{transform:scale(.78);transition:transform .12s ease-out}
+.tcue.go .tcue-tip.gone{opacity:0;transition:opacity .6s ease}
+.tcue-tip::before,.tcue-tip::after{content:'';position:absolute;inset:0;border-radius:50%;box-shadow:0 0 0 2px rgba(255,255,255,.9);opacity:0}
+.tcue-tip.press::before{animation:tcueRipple .7s ease-out forwards}
+.tcue-tip.press::after{animation:tcueRipple .7s .12s ease-out forwards}
+@keyframes tcueRipple{from{opacity:1;transform:scale(.7)}to{opacity:0;transform:scale(3)}}
+.tcue-chip{position:absolute;left:0;top:0;display:inline-flex;align-items:center;gap:.6em;white-space:nowrap;font-family:'Saira',sans-serif;font-weight:600;font-size:clamp(12px,1.2vw,16px);letter-spacing:.01em;color:#0A0E16;background:#F4F7FB;border-radius:999px;padding:.6em 1.1em .6em .85em;box-shadow:0 16px 36px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.7);opacity:0;transform:translateY(-10px) scale(.94);transform-origin:var(--tail,50%) 100%;transition:opacity .3s ease,transform .55s cubic-bezier(.3,1.5,.5,1)}
+.tcue-chip::after{content:'';position:absolute;left:var(--tail,50%);bottom:-5px;width:11px;height:11px;margin-left:-5.5px;background:#F4F7FB;transform:rotate(45deg);border-radius:0 0 2px 0}
+.tcue-chip b{flex:none;width:.55em;height:.55em;border-radius:50%;background:#e02434;box-shadow:0 0 0 0 rgba(224,36,52,.55);animation:tcueLive 1.6s ease-out infinite}
+@keyframes tcueLive{to{box-shadow:0 0 0 .6em rgba(224,36,52,0)}}
+.tcue.handover .tcue-chip{opacity:1;transform:none}
+.tcue.done{opacity:0;transition:opacity .4s ease}
+@media(prefers-reduced-motion:reduce){.tcue-tip,.tcue-chip,.tcue.go .tcue-tip{transition:none}.tcue-chip b{animation:none}}
 .tsheen{position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,rgba(255,255,255,.06),rgba(255,255,255,0) 35%)}
 .demo-badge{position:absolute;right:2.2%;top:-14px;font-family:'Martian Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:.16em;color:#fff;background:#e02434;padding:5px 10px;border-radius:999px;box-shadow:0 6px 18px rgba(224,36,52,.45)}
 .try-actions{display:flex;flex-wrap:wrap;align-items:center;gap:14px 22px;margin-top:26px}
@@ -252,7 +269,12 @@ body{margin:0;background:var(--bg);color:var(--txt);font-family:'Saira','Helveti
 .ac-form label{font-family:'Martian Mono',monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
 .ac-form input[type=email]{font:inherit;font-size:16px;color:var(--txt);background:rgba(7,10,18,.7);border:1px solid var(--line2);border-radius:12px;height:48px;padding:0 14px}
 .ac-form .ac-check{display:flex;gap:10px;align-items:center;font-family:'Saira',sans-serif;font-size:14.5px;letter-spacing:0;text-transform:none;color:var(--dim)}
-.ac-form .ac-check input{width:20px;height:20px;accent-color:#e02434}
+.ac-form .ac-check input{appearance:none;-webkit-appearance:none;flex:none;margin:0;width:20px;height:20px;border-radius:6px;background:rgba(7,10,18,.7);box-shadow:inset 0 0 0 1px var(--line2);display:grid;place-content:center;cursor:pointer;transition:background .15s ease,box-shadow .15s ease}
+.ac-form .ac-check input::after{content:'';width:10px;height:6px;margin-top:-2px;border:solid #fff;border-width:0 0 2px 2px;transform:rotate(-45deg) scale(0);transition:transform .15s ease}
+.ac-form .ac-check input:hover{box-shadow:inset 0 0 0 1px var(--dim)}
+.ac-form .ac-check input:checked{background:#e02434;box-shadow:inset 0 0 0 1px #e02434}
+.ac-form .ac-check input:checked::after{transform:rotate(-45deg) scale(1)}
+.ac-form .ac-check input:focus-visible{outline:2px solid var(--gate);outline-offset:2px}
 .ac-form button{align-self:flex-start;font-family:'Martian Mono',monospace;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:#e02434;border:0;border-radius:999px;padding:15px 22px;min-height:44px;cursor:pointer}
 .ac-form [hidden]{display:none!important}
 .ac-form .ac-hp{display:none}
@@ -262,21 +284,38 @@ body{margin:0;background:var(--bg);color:var(--txt);font-family:'Saira','Helveti
 .appcard .ac-fine{margin-top:auto;padding-top:4px;font-size:14px;color:var(--faint)}
 .ac-fine a{font:inherit;color:var(--dim);text-decoration:underline;text-decoration-color:var(--line2);text-underline-offset:3px}
 .ac-fine a:hover{color:var(--txt)}
-.ac-meta{font-family:'Martian Mono',monospace;font-size:11px;letter-spacing:.04em;color:var(--faint)}
-.ac-qr{display:flex;align-items:center;gap:16px;color:var(--dim);font-size:14.5px}
-.appcard > .btn-primary{align-self:flex-start}
-.ac-qr .qr{width:104px;height:104px;flex:none;border-radius:10px;display:block}
-.ac-sum{display:flex;flex-direction:column;gap:4px;margin-top:-6px;font-family:'Martian Mono',monospace;font-size:10.5px;letter-spacing:.04em;color:var(--faint)}
-.ac-sum code{font:inherit;letter-spacing:.02em;color:var(--dim);word-break:break-all;user-select:all}
+/* Android: the code and the download side by side, the details in a quiet row at the bottom (level with the iPhone card's fine print) */
+.ac-get{display:flex;align-items:center;gap:22px;margin-top:4px}
+.ac-get-side{min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:14px;padding-left:22px;border-left:1px solid var(--line)}
+.ac-get-side .btn-primary{white-space:nowrap}
+.ac-scan{color:var(--dim);font-size:14.5px;line-height:1.45}
+/* the console's QR look (System → Users, the enrol page): white modules on brand red, the Airgapp mark in the middle */
+.ac-get .qr{--q:clamp(116px,11vw,150px);position:relative;flex:none;width:var(--q);height:var(--q);box-sizing:border-box;background:#e02434;padding:calc(var(--q) * .056);border-radius:calc(var(--q) * .0625)}
+.ac-get .qr svg{display:block;width:100%;height:100%}
+.ac-get .qr-mark{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:22.4%;height:22.4%;box-sizing:border-box;background:#e02434;border-radius:20%;padding:1.7%}
+.ac-get .qr-mark img{display:block;width:100%;height:100%;border-radius:16%}
+.ac-meta{margin-top:auto;padding-top:14px;border-top:1px solid var(--line);display:flex;flex-direction:column;align-items:flex-start;gap:2px;font-family:'Martian Mono',monospace;font-size:10.5px;letter-spacing:.04em;color:var(--faint)}
+.ac-facts{display:flex;flex-wrap:wrap}
+.ac-facts > span:not(:first-child)::before{content:'·';margin:0 .6em}
+.ac-sum{display:flex;align-items:center;gap:2px;margin-left:0}
+.ac-hash{font:inherit;letter-spacing:.02em;color:var(--dim);background:none;border:0;border-radius:8px;padding:5px 7px;margin:0;cursor:pointer;display:inline-flex;align-items:center;gap:10px;word-break:break-all;text-align:left}
+.ac-hash span{min-width:0}
+.ac-hash i{flex:none;white-space:nowrap;font-style:normal;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);transition:color .2s ease}
+.ac-hash:hover{background:rgba(255,255,255,.05);color:var(--txt)}
+.ac-hash:hover i{color:var(--dim)}
+.ac-hash.done i{color:var(--safe)}
+.ac-hash:focus-visible{outline:2px solid var(--gate);outline-offset:1px}
 @media(max-width:860px){
   /* a phone sees the same car, closer: the screen fills the width and stays live */
   .cabin{aspect-ratio:4/3;border-radius:18px}
   .cab-in{inset:auto;left:-53.8%;top:-62%;width:184%;aspect-ratio:1280/860}
   .demo-badge{top:-9px;font-size:9px;padding:4px 8px}
   .appcards{grid-template-columns:1fr}
-  .ac-qr{display:none}
+  .ac-get .qr,.ac-scan{display:none}
+  .ac-get-side{padding-left:0;border-left:0}
 }
 
+@media(max-width:380px){.ac-meta{font-size:9.5px;letter-spacing:.02em}.ac-facts > span:not(:first-child)::before{margin:0 .45em}}
 /* ---------- outro ---------- */
 .foot{display:flex;justify-content:space-between;gap:16px;border-top:1px solid var(--line);padding:26px clamp(20px,4vw,48px);font-family:'Martian Mono',monospace;font-size:11px;letter-spacing:.08em;color:var(--faint)}
 .foot a{font:inherit;letter-spacing:inherit;text-transform:none;color:var(--dim);text-decoration:none;background:none;padding:0;border-radius:0}
@@ -405,7 +444,7 @@ html{scroll-padding-top:88px}   /* in-page links land below the fixed nav */
 </svg>
 
 <header class="nav">
-  <div class="brand"><img src="/assets/airgapp-logo.png" alt="Airgapp"></div>
+  <a class="brand" href="/"><img src="/assets/airgapp-logo.png" alt="Airgapp home"></a>
   <div class="sp"></div>
   <a href="#how">How it works</a>
   <a href="#app">The app</a>
@@ -723,7 +762,7 @@ html{scroll-padding-top:88px}   /* in-page links land below the fixed nav */
     <!-- the centre screen, floating above the dash -->
     <div class="tablet">
       <div class="tscreen" id="tscreen">
-        <iframe id="demoFrame" title="Airgapp console demo" src="https://demo.airgapp.net/" loading="lazy"></iframe>
+        <iframe id="demoFrame" title="Airgapp console demo" src="https://demo.airgapp.net/devices" loading="lazy"></iframe>
         <div class="tsheen" aria-hidden="true"></div>
       </div>
       <span class="demo-badge">DEMO</span>
@@ -758,10 +797,14 @@ html{scroll-padding-top:88px}   /* in-page links land below the fixed nav */
       <div class="appcard" data-os="android" id="android">
         <div class="ac-top"><span class="ac-os">Android</span><span class="ac-tag">Download</span></div>
         <p>Install it straight from here. Your phone will ask once to allow installing apps from your browser.</p>
-        <a class="btn-primary" href="https://github.com/ivan-prodanov/airgapp-mobile/releases/download/v1.0.0/airgapp-1.0.0-2.apk" id="apkLink">Download the app (APK)</a>
-        <div class="ac-meta">Version 1.0.0 · 99 MB · Android&nbsp;8&nbsp;or&nbsp;later</div>
-        <div class="ac-sum"><span>SHA-256</span><code>c441c17210cb8725e7162ed4147b6bb720bfd9cbd9186766a11ae94a8763967c</code></div>
-        <div class="ac-qr"><svg class="qr" viewBox="0 0 35 35" shape-rendering="crispEdges" role="img" aria-label="QR code for https://airgapp.net/#android"><rect width="35" height="35" fill="#fff"/><path d="M3,3h1v1h-1zM4,3h1v1h-1zM5,3h1v1h-1zM6,3h1v1h-1zM7,3h1v1h-1zM8,3h1v1h-1zM9,3h1v1h-1zM11,3h1v1h-1zM12,3h1v1h-1zM13,3h1v1h-1zM16,3h1v1h-1zM17,3h1v1h-1zM18,3h1v1h-1zM20,3h1v1h-1zM21,3h1v1h-1zM22,3h1v1h-1zM23,3h1v1h-1zM25,3h1v1h-1zM26,3h1v1h-1zM27,3h1v1h-1zM28,3h1v1h-1zM29,3h1v1h-1zM30,3h1v1h-1zM31,3h1v1h-1zM3,4h1v1h-1zM9,4h1v1h-1zM11,4h1v1h-1zM16,4h1v1h-1zM19,4h1v1h-1zM21,4h1v1h-1zM25,4h1v1h-1zM31,4h1v1h-1zM3,5h1v1h-1zM5,5h1v1h-1zM6,5h1v1h-1zM7,5h1v1h-1zM9,5h1v1h-1zM12,5h1v1h-1zM14,5h1v1h-1zM15,5h1v1h-1zM19,5h1v1h-1zM22,5h1v1h-1zM25,5h1v1h-1zM27,5h1v1h-1zM28,5h1v1h-1zM29,5h1v1h-1zM31,5h1v1h-1zM3,6h1v1h-1zM5,6h1v1h-1zM6,6h1v1h-1zM7,6h1v1h-1zM9,6h1v1h-1zM11,6h1v1h-1zM12,6h1v1h-1zM13,6h1v1h-1zM14,6h1v1h-1zM17,6h1v1h-1zM18,6h1v1h-1zM20,6h1v1h-1zM25,6h1v1h-1zM27,6h1v1h-1zM28,6h1v1h-1zM29,6h1v1h-1zM31,6h1v1h-1zM3,7h1v1h-1zM5,7h1v1h-1zM6,7h1v1h-1zM7,7h1v1h-1zM9,7h1v1h-1zM13,7h1v1h-1zM14,7h1v1h-1zM17,7h1v1h-1zM19,7h1v1h-1zM20,7h1v1h-1zM22,7h1v1h-1zM25,7h1v1h-1zM27,7h1v1h-1zM28,7h1v1h-1zM29,7h1v1h-1zM31,7h1v1h-1zM3,8h1v1h-1zM9,8h1v1h-1zM12,8h1v1h-1zM13,8h1v1h-1zM14,8h1v1h-1zM16,8h1v1h-1zM18,8h1v1h-1zM19,8h1v1h-1zM21,8h1v1h-1zM22,8h1v1h-1zM23,8h1v1h-1zM25,8h1v1h-1zM31,8h1v1h-1zM3,9h1v1h-1zM4,9h1v1h-1zM5,9h1v1h-1zM6,9h1v1h-1zM7,9h1v1h-1zM8,9h1v1h-1zM9,9h1v1h-1zM11,9h1v1h-1zM13,9h1v1h-1zM15,9h1v1h-1zM17,9h1v1h-1zM19,9h1v1h-1zM21,9h1v1h-1zM23,9h1v1h-1zM25,9h1v1h-1zM26,9h1v1h-1zM27,9h1v1h-1zM28,9h1v1h-1zM29,9h1v1h-1zM30,9h1v1h-1zM31,9h1v1h-1zM11,10h1v1h-1zM12,10h1v1h-1zM13,10h1v1h-1zM15,10h1v1h-1zM18,10h1v1h-1zM19,10h1v1h-1zM20,10h1v1h-1zM22,10h1v1h-1zM23,10h1v1h-1zM3,11h1v1h-1zM5,11h1v1h-1zM6,11h1v1h-1zM8,11h1v1h-1zM9,11h1v1h-1zM10,11h1v1h-1zM12,11h1v1h-1zM14,11h1v1h-1zM16,11h1v1h-1zM18,11h1v1h-1zM20,11h1v1h-1zM21,11h1v1h-1zM22,11h1v1h-1zM25,11h1v1h-1zM28,11h1v1h-1zM30,11h1v1h-1zM31,11h1v1h-1zM3,12h1v1h-1zM8,12h1v1h-1zM11,12h1v1h-1zM12,12h1v1h-1zM14,12h1v1h-1zM15,12h1v1h-1zM16,12h1v1h-1zM17,12h1v1h-1zM18,12h1v1h-1zM22,12h1v1h-1zM24,12h1v1h-1zM25,12h1v1h-1zM26,12h1v1h-1zM27,12h1v1h-1zM31,12h1v1h-1zM6,13h1v1h-1zM7,13h1v1h-1zM9,13h1v1h-1zM10,13h1v1h-1zM11,13h1v1h-1zM12,13h1v1h-1zM16,13h1v1h-1zM19,13h1v1h-1zM27,13h1v1h-1zM29,13h1v1h-1zM30,13h1v1h-1zM4,14h1v1h-1zM6,14h1v1h-1zM7,14h1v1h-1zM8,14h1v1h-1zM15,14h1v1h-1zM19,14h1v1h-1zM23,14h1v1h-1zM24,14h1v1h-1zM25,14h1v1h-1zM26,14h1v1h-1zM31,14h1v1h-1zM4,15h1v1h-1zM5,15h1v1h-1zM6,15h1v1h-1zM8,15h1v1h-1zM9,15h1v1h-1zM12,15h1v1h-1zM17,15h1v1h-1zM18,15h1v1h-1zM20,15h1v1h-1zM22,15h1v1h-1zM28,15h1v1h-1zM29,15h1v1h-1zM5,16h1v1h-1zM7,16h1v1h-1zM10,16h1v1h-1zM13,16h1v1h-1zM14,16h1v1h-1zM17,16h1v1h-1zM19,16h1v1h-1zM22,16h1v1h-1zM23,16h1v1h-1zM24,16h1v1h-1zM25,16h1v1h-1zM29,16h1v1h-1zM30,16h1v1h-1zM31,16h1v1h-1zM3,17h1v1h-1zM5,17h1v1h-1zM9,17h1v1h-1zM16,17h1v1h-1zM18,17h1v1h-1zM19,17h1v1h-1zM20,17h1v1h-1zM21,17h1v1h-1zM22,17h1v1h-1zM25,17h1v1h-1zM27,17h1v1h-1zM29,17h1v1h-1zM30,17h1v1h-1zM31,17h1v1h-1zM3,18h1v1h-1zM5,18h1v1h-1zM8,18h1v1h-1zM11,18h1v1h-1zM14,18h1v1h-1zM17,18h1v1h-1zM19,18h1v1h-1zM23,18h1v1h-1zM24,18h1v1h-1zM27,18h1v1h-1zM30,18h1v1h-1zM6,19h1v1h-1zM7,19h1v1h-1zM8,19h1v1h-1zM9,19h1v1h-1zM17,19h1v1h-1zM18,19h1v1h-1zM19,19h1v1h-1zM21,19h1v1h-1zM24,19h1v1h-1zM27,19h1v1h-1zM28,19h1v1h-1zM30,19h1v1h-1zM5,20h1v1h-1zM6,20h1v1h-1zM7,20h1v1h-1zM8,20h1v1h-1zM10,20h1v1h-1zM11,20h1v1h-1zM12,20h1v1h-1zM14,20h1v1h-1zM17,20h1v1h-1zM19,20h1v1h-1zM20,20h1v1h-1zM23,20h1v1h-1zM24,20h1v1h-1zM26,20h1v1h-1zM28,20h1v1h-1zM29,20h1v1h-1zM30,20h1v1h-1zM3,21h1v1h-1zM6,21h1v1h-1zM8,21h1v1h-1zM9,21h1v1h-1zM12,21h1v1h-1zM16,21h1v1h-1zM17,21h1v1h-1zM18,21h1v1h-1zM19,21h1v1h-1zM21,21h1v1h-1zM23,21h1v1h-1zM24,21h1v1h-1zM26,21h1v1h-1zM27,21h1v1h-1zM29,21h1v1h-1zM6,22h1v1h-1zM10,22h1v1h-1zM11,22h1v1h-1zM12,22h1v1h-1zM13,22h1v1h-1zM15,22h1v1h-1zM16,22h1v1h-1zM17,22h1v1h-1zM20,22h1v1h-1zM21,22h1v1h-1zM26,22h1v1h-1zM27,22h1v1h-1zM29,22h1v1h-1zM4,23h1v1h-1zM6,23h1v1h-1zM7,23h1v1h-1zM8,23h1v1h-1zM9,23h1v1h-1zM11,23h1v1h-1zM13,23h1v1h-1zM14,23h1v1h-1zM15,23h1v1h-1zM16,23h1v1h-1zM17,23h1v1h-1zM19,23h1v1h-1zM20,23h1v1h-1zM21,23h1v1h-1zM22,23h1v1h-1zM23,23h1v1h-1zM24,23h1v1h-1zM25,23h1v1h-1zM26,23h1v1h-1zM27,23h1v1h-1zM28,23h1v1h-1zM29,23h1v1h-1zM11,24h1v1h-1zM12,24h1v1h-1zM13,24h1v1h-1zM14,24h1v1h-1zM18,24h1v1h-1zM19,24h1v1h-1zM21,24h1v1h-1zM23,24h1v1h-1zM27,24h1v1h-1zM28,24h1v1h-1zM29,24h1v1h-1zM30,24h1v1h-1zM31,24h1v1h-1zM3,25h1v1h-1zM4,25h1v1h-1zM5,25h1v1h-1zM6,25h1v1h-1zM7,25h1v1h-1zM8,25h1v1h-1zM9,25h1v1h-1zM11,25h1v1h-1zM13,25h1v1h-1zM17,25h1v1h-1zM18,25h1v1h-1zM20,25h1v1h-1zM21,25h1v1h-1zM22,25h1v1h-1zM23,25h1v1h-1zM25,25h1v1h-1zM27,25h1v1h-1zM28,25h1v1h-1zM30,25h1v1h-1zM3,26h1v1h-1zM9,26h1v1h-1zM11,26h1v1h-1zM12,26h1v1h-1zM14,26h1v1h-1zM16,26h1v1h-1zM17,26h1v1h-1zM18,26h1v1h-1zM23,26h1v1h-1zM27,26h1v1h-1zM28,26h1v1h-1zM31,26h1v1h-1zM3,27h1v1h-1zM5,27h1v1h-1zM6,27h1v1h-1zM7,27h1v1h-1zM9,27h1v1h-1zM12,27h1v1h-1zM13,27h1v1h-1zM15,27h1v1h-1zM19,27h1v1h-1zM21,27h1v1h-1zM23,27h1v1h-1zM24,27h1v1h-1zM25,27h1v1h-1zM26,27h1v1h-1zM27,27h1v1h-1zM29,27h1v1h-1zM31,27h1v1h-1zM3,28h1v1h-1zM5,28h1v1h-1zM6,28h1v1h-1zM7,28h1v1h-1zM9,28h1v1h-1zM11,28h1v1h-1zM12,28h1v1h-1zM26,28h1v1h-1zM27,28h1v1h-1zM28,28h1v1h-1zM30,28h1v1h-1zM3,29h1v1h-1zM5,29h1v1h-1zM6,29h1v1h-1zM7,29h1v1h-1zM9,29h1v1h-1zM11,29h1v1h-1zM14,29h1v1h-1zM20,29h1v1h-1zM21,29h1v1h-1zM23,29h1v1h-1zM26,29h1v1h-1zM29,29h1v1h-1zM31,29h1v1h-1zM3,30h1v1h-1zM9,30h1v1h-1zM13,30h1v1h-1zM14,30h1v1h-1zM15,30h1v1h-1zM17,30h1v1h-1zM18,30h1v1h-1zM20,30h1v1h-1zM21,30h1v1h-1zM23,30h1v1h-1zM25,30h1v1h-1zM26,30h1v1h-1zM27,30h1v1h-1zM28,30h1v1h-1zM30,30h1v1h-1zM3,31h1v1h-1zM4,31h1v1h-1zM5,31h1v1h-1zM6,31h1v1h-1zM7,31h1v1h-1zM8,31h1v1h-1zM9,31h1v1h-1zM11,31h1v1h-1zM12,31h1v1h-1zM17,31h1v1h-1zM20,31h1v1h-1zM21,31h1v1h-1zM22,31h1v1h-1zM23,31h1v1h-1zM25,31h1v1h-1zM26,31h1v1h-1zM30,31h1v1h-1z" fill="#0a0e16"/></svg><span>On a laptop? Scan this with your phone.</span></div>
+        <div class="ac-get">
+          <div class="qr"><svg viewBox="0 0 37 37" shape-rendering="crispEdges" role="img" aria-label="QR code for https://airgapp.net/#android"><path d="M2 2h1v1h-1zM3 2h1v1h-1zM4 2h1v1h-1zM5 2h1v1h-1zM6 2h1v1h-1zM7 2h1v1h-1zM8 2h1v1h-1zM10 2h1v1h-1zM11 2h1v1h-1zM14 2h1v1h-1zM16 2h1v1h-1zM17 2h1v1h-1zM18 2h1v1h-1zM19 2h1v1h-1zM20 2h1v1h-1zM22 2h1v1h-1zM24 2h1v1h-1zM25 2h1v1h-1zM26 2h1v1h-1zM28 2h1v1h-1zM29 2h1v1h-1zM30 2h1v1h-1zM31 2h1v1h-1zM32 2h1v1h-1zM33 2h1v1h-1zM34 2h1v1h-1zM2 3h1v1h-1zM8 3h1v1h-1zM11 3h1v1h-1zM12 3h1v1h-1zM16 3h1v1h-1zM17 3h1v1h-1zM19 3h1v1h-1zM20 3h1v1h-1zM23 3h1v1h-1zM25 3h1v1h-1zM28 3h1v1h-1zM34 3h1v1h-1zM2 4h1v1h-1zM4 4h1v1h-1zM5 4h1v1h-1zM6 4h1v1h-1zM8 4h1v1h-1zM12 4h1v1h-1zM13 4h1v1h-1zM15 4h1v1h-1zM16 4h1v1h-1zM18 4h1v1h-1zM19 4h1v1h-1zM24 4h1v1h-1zM25 4h1v1h-1zM26 4h1v1h-1zM28 4h1v1h-1zM30 4h1v1h-1zM31 4h1v1h-1zM32 4h1v1h-1zM34 4h1v1h-1zM2 5h1v1h-1zM4 5h1v1h-1zM5 5h1v1h-1zM6 5h1v1h-1zM8 5h1v1h-1zM10 5h1v1h-1zM12 5h1v1h-1zM13 5h1v1h-1zM14 5h1v1h-1zM15 5h1v1h-1zM16 5h1v1h-1zM18 5h1v1h-1zM26 5h1v1h-1zM28 5h1v1h-1zM30 5h1v1h-1zM31 5h1v1h-1zM32 5h1v1h-1zM34 5h1v1h-1zM2 6h1v1h-1zM4 6h1v1h-1zM5 6h1v1h-1zM6 6h1v1h-1zM8 6h1v1h-1zM12 6h1v1h-1zM13 6h1v1h-1zM14 6h1v1h-1zM17 6h1v1h-1zM18 6h1v1h-1zM19 6h1v1h-1zM20 6h1v1h-1zM21 6h1v1h-1zM24 6h1v1h-1zM26 6h1v1h-1zM28 6h1v1h-1zM30 6h1v1h-1zM31 6h1v1h-1zM32 6h1v1h-1zM34 6h1v1h-1zM2 7h1v1h-1zM8 7h1v1h-1zM11 7h1v1h-1zM16 7h1v1h-1zM18 7h1v1h-1zM21 7h1v1h-1zM22 7h1v1h-1zM23 7h1v1h-1zM24 7h1v1h-1zM25 7h1v1h-1zM26 7h1v1h-1zM28 7h1v1h-1zM34 7h1v1h-1zM2 8h1v1h-1zM3 8h1v1h-1zM4 8h1v1h-1zM5 8h1v1h-1zM6 8h1v1h-1zM7 8h1v1h-1zM8 8h1v1h-1zM10 8h1v1h-1zM12 8h1v1h-1zM14 8h1v1h-1zM16 8h1v1h-1zM18 8h1v1h-1zM20 8h1v1h-1zM22 8h1v1h-1zM24 8h1v1h-1zM26 8h1v1h-1zM28 8h1v1h-1zM29 8h1v1h-1zM30 8h1v1h-1zM31 8h1v1h-1zM32 8h1v1h-1zM33 8h1v1h-1zM34 8h1v1h-1zM11 9h1v1h-1zM12 9h1v1h-1zM13 9h1v1h-1zM14 9h1v1h-1zM16 9h1v1h-1zM17 9h1v1h-1zM18 9h1v1h-1zM21 9h1v1h-1zM22 9h1v1h-1zM23 9h1v1h-1zM25 9h1v1h-1zM4 10h1v1h-1zM6 10h1v1h-1zM7 10h1v1h-1zM8 10h1v1h-1zM10 10h1v1h-1zM12 10h1v1h-1zM14 10h1v1h-1zM19 10h1v1h-1zM20 10h1v1h-1zM22 10h1v1h-1zM23 10h1v1h-1zM26 10h1v1h-1zM27 10h1v1h-1zM31 10h1v1h-1zM34 10h1v1h-1zM3 11h1v1h-1zM4 11h1v1h-1zM6 11h1v1h-1zM9 11h1v1h-1zM13 11h1v1h-1zM16 11h1v1h-1zM19 11h1v1h-1zM22 11h1v1h-1zM24 11h1v1h-1zM26 11h1v1h-1zM28 11h1v1h-1zM33 11h1v1h-1zM34 11h1v1h-1zM2 12h1v1h-1zM3 12h1v1h-1zM4 12h1v1h-1zM5 12h1v1h-1zM6 12h1v1h-1zM8 12h1v1h-1zM9 12h1v1h-1zM10 12h1v1h-1zM11 12h1v1h-1zM14 12h1v1h-1zM15 12h1v1h-1zM17 12h1v1h-1zM18 12h1v1h-1zM21 12h1v1h-1zM23 12h1v1h-1zM26 12h1v1h-1zM27 12h1v1h-1zM28 12h1v1h-1zM30 12h1v1h-1zM31 12h1v1h-1zM32 12h1v1h-1zM33 12h1v1h-1zM34 12h1v1h-1zM2 13h1v1h-1zM6 13h1v1h-1zM11 13h1v1h-1zM13 13h1v1h-1zM14 13h1v1h-1zM21 13h1v1h-1zM22 13h1v1h-1zM26 13h1v1h-1zM28 13h1v1h-1zM2 14h1v1h-1zM4 14h1v1h-1zM8 14h1v1h-1zM10 14h1v1h-1zM15 14h1v1h-1zM16 14h1v1h-1zM17 14h1v1h-1zM18 14h1v1h-1zM20 14h1v1h-1zM21 14h1v1h-1zM25 14h1v1h-1zM27 14h1v1h-1zM28 14h1v1h-1zM30 14h1v1h-1zM31 14h1v1h-1zM34 14h1v1h-1zM2 15h1v1h-1zM6 15h1v1h-1zM13 15h1v1h-1zM16 15h1v1h-1zM17 15h1v1h-1zM19 15h1v1h-1zM22 15h1v1h-1zM26 15h1v1h-1zM27 15h1v1h-1zM28 15h1v1h-1zM30 15h1v1h-1zM31 15h1v1h-1zM32 15h1v1h-1zM33 15h1v1h-1zM34 15h1v1h-1zM6 16h1v1h-1zM8 16h1v1h-1zM9 16h1v1h-1zM10 16h1v1h-1zM13 16h1v1h-1zM14 16h1v1h-1zM16 16h1v1h-1zM17 16h1v1h-1zM21 16h1v1h-1zM22 16h1v1h-1zM23 16h1v1h-1zM26 16h1v1h-1zM28 16h1v1h-1zM31 16h1v1h-1zM32 16h1v1h-1zM33 16h1v1h-1zM34 16h1v1h-1zM3 17h1v1h-1zM5 17h1v1h-1zM7 17h1v1h-1zM12 17h1v1h-1zM13 17h1v1h-1zM14 17h1v1h-1zM15 17h1v1h-1zM18 17h1v1h-1zM19 17h1v1h-1zM20 17h1v1h-1zM22 17h1v1h-1zM23 17h1v1h-1zM24 17h1v1h-1zM25 17h1v1h-1zM28 17h1v1h-1zM30 17h1v1h-1zM33 17h1v1h-1zM2 18h1v1h-1zM5 18h1v1h-1zM6 18h1v1h-1zM7 18h1v1h-1zM8 18h1v1h-1zM12 18h1v1h-1zM13 18h1v1h-1zM17 18h1v1h-1zM18 18h1v1h-1zM19 18h1v1h-1zM21 18h1v1h-1zM22 18h1v1h-1zM23 18h1v1h-1zM24 18h1v1h-1zM27 18h1v1h-1zM28 18h1v1h-1zM33 18h1v1h-1zM4 19h1v1h-1zM9 19h1v1h-1zM20 19h1v1h-1zM22 19h1v1h-1zM27 19h1v1h-1zM28 19h1v1h-1zM29 19h1v1h-1zM31 19h1v1h-1zM32 19h1v1h-1zM33 19h1v1h-1zM34 19h1v1h-1zM4 20h1v1h-1zM5 20h1v1h-1zM8 20h1v1h-1zM12 20h1v1h-1zM16 20h1v1h-1zM17 20h1v1h-1zM18 20h1v1h-1zM20 20h1v1h-1zM21 20h1v1h-1zM23 20h1v1h-1zM28 20h1v1h-1zM29 20h1v1h-1zM32 20h1v1h-1zM33 20h1v1h-1zM34 20h1v1h-1zM4 21h1v1h-1zM5 21h1v1h-1zM6 21h1v1h-1zM10 21h1v1h-1zM11 21h1v1h-1zM12 21h1v1h-1zM16 21h1v1h-1zM21 21h1v1h-1zM23 21h1v1h-1zM30 21h1v1h-1zM34 21h1v1h-1zM4 22h1v1h-1zM8 22h1v1h-1zM9 22h1v1h-1zM13 22h1v1h-1zM14 22h1v1h-1zM15 22h1v1h-1zM16 22h1v1h-1zM17 22h1v1h-1zM19 22h1v1h-1zM20 22h1v1h-1zM21 22h1v1h-1zM22 22h1v1h-1zM23 22h1v1h-1zM26 22h1v1h-1zM28 22h1v1h-1zM31 22h1v1h-1zM33 22h1v1h-1zM4 23h1v1h-1zM5 23h1v1h-1zM6 23h1v1h-1zM9 23h1v1h-1zM12 23h1v1h-1zM13 23h1v1h-1zM15 23h1v1h-1zM16 23h1v1h-1zM21 23h1v1h-1zM23 23h1v1h-1zM25 23h1v1h-1zM26 23h1v1h-1zM31 23h1v1h-1zM32 23h1v1h-1zM33 23h1v1h-1zM34 23h1v1h-1zM2 24h1v1h-1zM5 24h1v1h-1zM6 24h1v1h-1zM8 24h1v1h-1zM11 24h1v1h-1zM12 24h1v1h-1zM15 24h1v1h-1zM17 24h1v1h-1zM19 24h1v1h-1zM21 24h1v1h-1zM22 24h1v1h-1zM23 24h1v1h-1zM24 24h1v1h-1zM25 24h1v1h-1zM26 24h1v1h-1zM28 24h1v1h-1zM31 24h1v1h-1zM32 24h1v1h-1zM33 24h1v1h-1zM34 24h1v1h-1zM3 25h1v1h-1zM4 25h1v1h-1zM7 25h1v1h-1zM9 25h1v1h-1zM11 25h1v1h-1zM12 25h1v1h-1zM13 25h1v1h-1zM14 25h1v1h-1zM15 25h1v1h-1zM17 25h1v1h-1zM20 25h1v1h-1zM21 25h1v1h-1zM23 25h1v1h-1zM26 25h1v1h-1zM27 25h1v1h-1zM29 25h1v1h-1zM33 25h1v1h-1zM34 25h1v1h-1zM2 26h1v1h-1zM4 26h1v1h-1zM6 26h1v1h-1zM8 26h1v1h-1zM10 26h1v1h-1zM12 26h1v1h-1zM13 26h1v1h-1zM14 26h1v1h-1zM15 26h1v1h-1zM16 26h1v1h-1zM20 26h1v1h-1zM22 26h1v1h-1zM23 26h1v1h-1zM25 26h1v1h-1zM26 26h1v1h-1zM27 26h1v1h-1zM28 26h1v1h-1zM29 26h1v1h-1zM30 26h1v1h-1zM31 26h1v1h-1zM33 26h1v1h-1zM10 27h1v1h-1zM11 27h1v1h-1zM12 27h1v1h-1zM13 27h1v1h-1zM18 27h1v1h-1zM19 27h1v1h-1zM23 27h1v1h-1zM25 27h1v1h-1zM26 27h1v1h-1zM30 27h1v1h-1zM33 27h1v1h-1zM34 27h1v1h-1zM2 28h1v1h-1zM3 28h1v1h-1zM4 28h1v1h-1zM5 28h1v1h-1zM6 28h1v1h-1zM7 28h1v1h-1zM8 28h1v1h-1zM11 28h1v1h-1zM13 28h1v1h-1zM14 28h1v1h-1zM16 28h1v1h-1zM18 28h1v1h-1zM24 28h1v1h-1zM25 28h1v1h-1zM26 28h1v1h-1zM28 28h1v1h-1zM30 28h1v1h-1zM32 28h1v1h-1zM33 28h1v1h-1zM34 28h1v1h-1zM2 29h1v1h-1zM8 29h1v1h-1zM10 29h1v1h-1zM11 29h1v1h-1zM15 29h1v1h-1zM17 29h1v1h-1zM18 29h1v1h-1zM19 29h1v1h-1zM20 29h1v1h-1zM22 29h1v1h-1zM23 29h1v1h-1zM24 29h1v1h-1zM26 29h1v1h-1zM30 29h1v1h-1zM31 29h1v1h-1zM34 29h1v1h-1zM2 30h1v1h-1zM4 30h1v1h-1zM5 30h1v1h-1zM6 30h1v1h-1zM8 30h1v1h-1zM10 30h1v1h-1zM12 30h1v1h-1zM14 30h1v1h-1zM16 30h1v1h-1zM17 30h1v1h-1zM20 30h1v1h-1zM22 30h1v1h-1zM24 30h1v1h-1zM26 30h1v1h-1zM27 30h1v1h-1zM28 30h1v1h-1zM29 30h1v1h-1zM30 30h1v1h-1zM33 30h1v1h-1zM2 31h1v1h-1zM4 31h1v1h-1zM5 31h1v1h-1zM6 31h1v1h-1zM8 31h1v1h-1zM11 31h1v1h-1zM12 31h1v1h-1zM14 31h1v1h-1zM19 31h1v1h-1zM21 31h1v1h-1zM22 31h1v1h-1zM24 31h1v1h-1zM30 31h1v1h-1zM2 32h1v1h-1zM4 32h1v1h-1zM5 32h1v1h-1zM6 32h1v1h-1zM8 32h1v1h-1zM10 32h1v1h-1zM13 32h1v1h-1zM14 32h1v1h-1zM16 32h1v1h-1zM21 32h1v1h-1zM22 32h1v1h-1zM23 32h1v1h-1zM24 32h1v1h-1zM26 32h1v1h-1zM27 32h1v1h-1zM29 32h1v1h-1zM30 32h1v1h-1zM32 32h1v1h-1zM34 32h1v1h-1zM2 33h1v1h-1zM8 33h1v1h-1zM12 33h1v1h-1zM16 33h1v1h-1zM18 33h1v1h-1zM19 33h1v1h-1zM21 33h1v1h-1zM23 33h1v1h-1zM24 33h1v1h-1zM26 33h1v1h-1zM27 33h1v1h-1zM29 33h1v1h-1zM31 33h1v1h-1zM33 33h1v1h-1zM2 34h1v1h-1zM3 34h1v1h-1zM4 34h1v1h-1zM5 34h1v1h-1zM6 34h1v1h-1zM7 34h1v1h-1zM8 34h1v1h-1zM14 34h1v1h-1zM15 34h1v1h-1zM17 34h1v1h-1zM18 34h1v1h-1zM20 34h1v1h-1zM21 34h1v1h-1zM22 34h1v1h-1zM23 34h1v1h-1zM25 34h1v1h-1zM26 34h1v1h-1zM27 34h1v1h-1zM28 34h1v1h-1zM29 34h1v1h-1zM30 34h1v1h-1zM32 34h1v1h-1zM33 34h1v1h-1zM34 34h1v1h-1z" fill="#ffffff"/></svg><div class="qr-mark"><img src="/assets/favicon-64.png" alt=""></div></div>
+          <div class="ac-get-side">
+            <span class="ac-scan">On a laptop? Scan this with your phone.</span>
+            <a class="btn-primary" href="https://github.com/ivan-prodanov/airgapp-mobile/releases/download/v1.0.0/airgapp-1.0.0-2.apk" id="apkLink">Download the app (APK)</a>
+          </div>
+        </div>
+        <div class="ac-meta"><div class="ac-facts"><span>v1.0.0</span><span>99&nbsp;MB</span><span>Android&nbsp;8 or later</span></div><div class="ac-sum">SHA-256 <button type="button" class="ac-hash" id="apkHash" data-sha="c441c17210cb8725e7162ed4147b6bb720bfd9cbd9186766a11ae94a8763967c" title="Copy the full SHA-256">c441c17210cb8725e7162ed4147b6bb720bfd9cbd9186766a11ae94a8763967c</button></div></div>
       </div>
     </div>
   </div>
@@ -1540,6 +1583,105 @@ html{scroll-padding-top:88px}   /* in-page links land below the fixed nav */
   const scr = document.getElementById('tscreen'), frame = document.getElementById('demoFrame');
   const fit = () => { frame.style.transform = `scale(${(scr.clientWidth / 1040).toFixed(4)})`; };
   new ResizeObserver(fit).observe(scr); fit();
+
+  // ---- making it obvious the car screen is live, not a picture. The screen starts on Devices. Once it's
+  // nearly all in view and the page has stopped scrolling, a fingertip taps Dashboard, the console really
+  // switches, and a light chip on the bezel (plainly not part of the console) hands over: "Your turn. Tap
+  // anything." If nobody touches the screen it shows them again (Devices, then Dashboard), at most twice,
+  // 7 s apart. Everything goes away the moment the visitor touches the screen. The demo tells us when
+  // it's ready and when it's first touched, and where its tabs are (see the demo's boot.js).
+  const cab = document.getElementById('trycab');
+  const DEMO = new URL(frame.src).origin, calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  let touched = false, readyNow, n = 0, inView = 0, lastScroll = 0;
+  const ready = new Promise(r => readyNow = r), asked = new Map();
+  const ask = msg => frame.contentWindow?.postMessage({ airgapp: 1, ...msg }, DEMO);
+  const where = what => new Promise(r => { const key = ++n; asked.set(key, r); ask({ type: 'where', key, ...what }); setTimeout(() => r(null), 1500); });
+  const cue = document.createElement('div');
+  cue.className = 'tcue'; cue.setAttribute('aria-hidden', 'true');
+  cue.innerHTML = '<i class="tcue-tip"></i><span class="tcue-chip"><b></b>Your turn. Tap anything.</span>';
+  cab.append(cue);
+  const tip = cue.querySelector('.tcue-tip'), chip = cue.querySelector('.tcue-chip');
+  addEventListener('message', e => {
+    if (e.origin !== DEMO || e.data?.airgapp !== 1) return;
+    const d = e.data;
+    if (d.type === 'ready') readyNow();
+    else if (d.type === 'touched' && !touched) { touched = true; cue.classList.add('done'); setTimeout(() => cue.remove(), 500); }
+    else if (d.type === 'here') { asked.get(d.key)?.(d.w ? d : null); asked.delete(d.key); }
+  });
+  addEventListener('scroll', () => { lastScroll = performance.now(); }, { passive: true });
+  new IntersectionObserver(es => { inView = es[es.length - 1].intersectionRatio; }, { threshold: [0, .25, .5, .65, .8, .9, 1] }).observe(scr);
+  const settled = async () => {
+    while (!touched) {
+      const tall = scr.getBoundingClientRect().height > innerHeight * .7;
+      if ((inView >= .8 || (tall && inView >= .5)) && performance.now() - lastScroll > 450) return true;
+      await sleep(120);
+    }
+    return false;
+  };
+  const frameOf = () => { const c = cab.getBoundingClientRect(), r = scr.getBoundingClientRect(); return { s: r.width / 1040, ox: r.left - c.left, oy: r.top - c.top, W: c.width }; };
+  // the fingertip goes to a tab and presses it; the console switches for real
+  const tap = async href => {
+    const t = await where({ href });
+    if (!t || touched) return false;
+    const { s, ox, oy } = frameOf();
+    cue.style.setProperty('--d', Math.max(30, 56 * s) + 'px');
+    cue.style.setProperty('--x', ox + (t.x + t.w / 2) * s + 'px');
+    cue.style.setProperty('--y', oy + (t.y + t.h / 2) * s + 'px');
+    if (!cue.classList.contains('go')) { void cue.offsetWidth; cue.classList.add('go'); await sleep(950); }   // first time: up from below
+    else { tip.classList.remove('gone'); await sleep(800); }                                                    // later: across
+    if (touched) return false;
+    tip.classList.add('press'); ask({ type: 'tap', href });
+    await sleep(380); tip.classList.remove('press');
+    return true;
+  };
+  // the chip sits on the bezel above the screen, its tail pointing down at the last tap
+  const handOver = () => {
+    const { ox, oy, W } = frameOf(), cw = chip.offsetWidth, ch = chip.offsetHeight;
+    const x = parseFloat(cue.style.getPropertyValue('--x')) || ox + scr.clientWidth / 2;
+    const left = Math.min(Math.max(10, x - cw / 2), W - cw - 10);
+    chip.style.left = left + 'px'; chip.style.top = Math.max(8, oy - ch - 12) + 'px';
+    chip.style.setProperty('--tail', Math.min(Math.max(18, x - left), cw - 18) + 'px');
+    cue.classList.add('handover');
+  };
+  (async () => {
+    if (!await settled()) return;
+    const live = !calm && await Promise.race([ready.then(() => true), sleep(8000).then(() => false)]);
+    for (let round = 0; round < 3 && !touched; round++) {
+      if (round) {
+        await sleep(7000);
+        if (!await settled()) return;
+        cue.classList.remove('handover'); await sleep(350);
+      } else if (!await settled()) return;
+      let ok = live;
+      if (ok && round) { ok = await tap('/devices'); await sleep(650); }
+      if (ok) ok = await tap('/');
+      if (touched) return;
+      await sleep(ok ? 500 : 0);
+      handOver();
+      if (!ok) return;
+      await sleep(2400); if (!touched) tip.classList.add('gone');
+    }
+  })();
+  // the APK's checksum: shown short, one click copies all 64 characters (without JS it shows in full)
+  const hash = document.getElementById('apkHash'), sha = hash.dataset.sha;
+  hash.innerHTML = `<span>${sha.slice(0, 8)}…${sha.slice(-8)}</span><i>Copy</i>`;
+  hash.setAttribute('aria-label', 'Copy the full SHA-256 checksum, ' + sha);
+  hash.addEventListener('click', async () => {
+    const i = hash.querySelector('i');
+    try { await navigator.clipboard.writeText(sha); i.textContent = 'Copied'; hash.classList.add('done'); }
+    catch {   // no clipboard access: show it all, selected, ready for the copy shortcut
+      hash.firstElementChild.textContent = sha; getSelection().selectAllChildren(hash.firstElementChild); i.textContent = 'Selected';
+    }
+    clearTimeout(hash.t); hash.t = setTimeout(() => { i.textContent = 'Copy'; hash.classList.remove('done'); }, 2400);
+  });
+  // the logo goes back to the top; on this page it scrolls there rather than reloading
+  document.querySelector('.nav .brand')?.addEventListener('click', e => {
+    if (location.pathname !== '/' || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button) return;
+    e.preventDefault();
+    scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+  });
   const ua = navigator.userAgent, cards = document.getElementById('appcards');
   if (/android/i.test(ua)) cards.prepend(cards.querySelector('[data-os="android"]'));
   const form = document.getElementById('iosForm'), btn = form.querySelector('button'), status = form.querySelector('.ac-status');
